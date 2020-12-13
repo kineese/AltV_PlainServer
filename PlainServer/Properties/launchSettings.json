@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "PlainServer": {
+      "commandName": "Executable",
+      "executablePath": "F:\\AltV\\PlainServerSharp\\altv-server.exe",
+      "workingDirectory": "F:\\AltV\\PlainServerSharp"
+    }
+  }
+}

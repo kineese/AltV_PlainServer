@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AltV.Net" Version="1.48.0-dev" />
+    <PackageReference Include="AltV.Net.Async" Version="1.45.0-dev" />
+    <PackageReference Include="NLog" Version="4.7.6" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(TargetPath)&quot; &quot;F:\AltV\PlainServerSharp\resources\server&quot; /y&#xD;&#xA;" />
+  </Target>
+
+</Project>
