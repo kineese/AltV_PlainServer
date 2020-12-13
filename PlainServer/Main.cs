@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PlainServer
 {
-    public class Main : AsyncResource
+    public class Main : Resource
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static ConcurrentStack<IColShape> ColShapes = new ConcurrentStack<IColShape>();
@@ -24,23 +24,20 @@ namespace PlainServer
             var logconsole = new NLog.Targets.ConsoleTarget() { Name = "logconsole", Layout = layout };
             cfg.AddRule(LogLevel.Debug, LogLevel.Fatal, logconsole);
             LogManager.Configuration = cfg;
-            AltAsync.OnColShape += HandleColshape;
-            AltAsync.OnPlayerConnect += HandlePlayerConnect;
-            AltAsync.OnPlayerDisconnect += HandlePlayerDisconnect;
+            Alt.OnColShape += HandleColshape;
+            Alt.OnPlayerConnect += HandlePlayerConnect;
+            Alt.OnPlayerDisconnect += HandlePlayerDisconnect;
 
         }
 
-        private async Task HandlePlayerDisconnect(IPlayer player, string reason)
+        private void HandlePlayerDisconnect(IPlayer player, string reason)
         {
             Logger.Info("Player disconnected. Removing colshape");
             ColShapes.TryPop(out var colShape);
-            await AltAsync.Do(() =>
-            {
-                Alt.RemoveColShape(colShape);
-            });
+            Alt.RemoveColShape(colShape);
         }
 
-        private async Task HandleColshape(IColShape colShape, IEntity targetEntity, bool state)
+        private void HandleColshape(IColShape colShape, IEntity targetEntity, bool state)
         {
             lock (targetEntity)
             {
@@ -70,7 +67,7 @@ namespace PlainServer
             }
         }
 
-        private async Task HandlePlayerConnect(IPlayer player, string reason)
+        private void HandlePlayerConnect(IPlayer player, string reason)
         {
             lock (player)
             {
@@ -79,15 +76,12 @@ namespace PlainServer
                 player.Spawn(new AltV.Net.Data.Position(813, -279, 66), 1000);
             }
 
-            await AltAsync.Do(() =>
-            {
-                var colshapeToAdd = Alt.CreateColShapeSphere(new AltV.Net.Data.Position(813, -279, 66), 10);
-                ColShapes.Push(colshapeToAdd);
-            });
+            var colshapeToAdd = Alt.CreateColShapeSphere(new AltV.Net.Data.Position(813, -279, 66), 10);
+            ColShapes.Push(colshapeToAdd);
             Logger.Info("Created Colshape");
         }
 
-        private async Task HandleClientEvent(IPlayer player, string eventName, object[] args)
+        private void HandleClientEvent(IPlayer player, string eventName, object[] args)
         {
             Logger.Info($"Player event with name '{eventName}' and arguments {string.Join(";", args)}");
         }
